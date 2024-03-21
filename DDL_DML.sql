@@ -2,7 +2,7 @@ SET SERVEROUTPUT ON;
 DECLARE
     CNT NUMBER;
 BEGIN
-    -- CATEGORY
+    -- CATEGORY ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'CATEGORY';
     IF cnt = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE category (
@@ -14,7 +14,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table category already exists.');
     END IF;
 
-    -- CUSTOMER
+    -- CUSTOMER ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'CUSTOMER';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE customer (
@@ -33,7 +33,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table customer already exists.');
     END IF;
 
-    -- SELLER
+    -- SELLER ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'SELLER';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE seller (
@@ -45,7 +45,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table seller already exists.');
     END IF;
 
-    -- PRODUCT
+    -- PRODUCT ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'PRODUCT';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE product (
@@ -66,7 +66,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table product already exists.');
     END IF;
 
-    -- ORDER (CUSTOMER_ORDER to avoid SQL keyword conflict)
+    -- CUSTOMER_ORDER ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'CUSTOMER_ORDER';
     IF CNT = 0 THEN
        EXECUTE IMMEDIATE 'CREATE TABLE customer_order (
@@ -80,7 +80,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table customer_order already exists.');
     END IF;
 
-    -- ORDER_PRODUCT
+    -- ORDER_PRODUCT ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'ORDER_PRODUCT';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE order_product (
@@ -95,7 +95,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table order_product already exists.');
     END IF;
 
-    -- DISCOUNT
+    -- DISCOUNT ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'DISCOUNT';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE discount (
@@ -113,7 +113,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table discount already exists.');
     END IF;
     
-    -- STORE
+    -- STORE ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'STORE';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE store (
@@ -130,7 +130,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table store already exists.');
     END IF;
 
-    -- FEEDBACK
+    -- FEEDBACK ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'FEEDBACK';
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE feedback (
@@ -146,14 +146,14 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Table feedback already exists.');
     END IF;
 
-    -- RETURN
+    -- RETURN ENTITY CREATION IF DOESNOT EXIST
     SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'RETURN';
     IF CNT = 0 THEN
       EXECUTE IMMEDIATE 'CREATE TABLE return (
         id VARCHAR2(10) CONSTRAINT return_pk PRIMARY KEY,
         reason VARCHAR(500) NOT NULL,
         return_date DATE NOT NULL,
-        refund_status VARCHAR(20) CHECK (refund_status IN (''IN_PROGRESS'', ''SUCCESSFUL'')),
+        refund_status VARCHAR(20) CHECK (refund_status IN (''INITIATED'', ''SUCCESSFUL'',''REJECTED'')),
         quantity_returned NUMBER(3) NOT NULL CHECK (quantity_returned > 0 ),
         processing_fee NUMBER(5, 2), -- not all returns will be successful so I put not, null,
         request_accepted NUMBER(1) CHECK (request_accepted IN (0, 1)),
@@ -172,7 +172,7 @@ BEGIN
 END;
 /
 
---------------------------------------------------------------------------
+----------------------------------                          ADDING COMMENTS FOR EACH ATTRIBUTE OF ENTITIES                                    ----------------------------------------
 
 COMMENT ON COLUMN return.id IS 'Unique identifier for each return record(PK)';
 COMMENT ON COLUMN return.reason IS 'Description of the reason for the return';
@@ -258,7 +258,13 @@ COMMENT ON COLUMN order_product.id IS 'Unique identifier for each order-product 
 COMMENT ON COLUMN order_product.customer_order_id IS 'Reference to the customer order this product is part of(FK)';
 COMMENT ON COLUMN order_product.product_id IS 'Reference to the product included in the order(FK)';
 COMMENT ON COLUMN order_product.quantity IS 'Quantity of the product ordered';
------------------------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------                           DML STATEMENTS                   ---------------------------------------------------------------------
+
+-- THE FOLLOWING DML STATEMENTS WILL CHECK FOR PRIMARY AND UNIQUE KEY CONSTRAINS(PHONE NO, EMAIL-ID) BEFORE INSERTING ROWNS INTO CORRESPONDING ENTITES. THUS PREVENTING DUPLICATE ENTRIES
+
+-- DML FOR CUSTOMER ENTITY
 BEGIN
     BEGIN
         INSERT INTO customer (id, name, contact_no, date_of_birth, email_id, joined_date, address_line, city, state, zip_code)
@@ -281,12 +287,12 @@ BEGIN
         VALUES ('C003', 'Charlie Heisenberg', '9300000003', TO_DATE('1990-12-25', 'YYYY-MM-DD'), 'charlie@gmail.com', TO_DATE('2022-03-15', 'YYYY-MM-DD'), '789 Cocoa St', 'Chicago', 'IL', '34567');
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Charlie Heisenberg or phone number or email already in use..');
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Charlie Heisenberg or phone number or email already in use.');
     END;
 END;
 /
 
--------------------------------------------------------------------
+-- DML FOR CATEGORY ENTITY
 BEGIN
     BEGIN
         INSERT INTO category (id, name, return_by_days)
@@ -325,7 +331,7 @@ END;
 /
 
 
---------------------------------------------------------------------------------------------------------
+-- DML FOR DISCOUNT ENTITY
 
 BEGIN
     BEGIN
@@ -337,7 +343,7 @@ BEGIN
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
-        VALUES ('DSC002', 'SM001', 15.00, TO_DATE('2024-03-01', 'YYYY-MM-DD'), TO_DATE('2024-03-15', 'YYYY-MM-DD'));
+        VALUES ('DSC002', 'SM001', 15.00, TO_DATE('2024-03-10', 'YYYY-MM-DD'), TO_DATE('2024-03-18', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC002 not inserted.');
     END;
@@ -394,11 +400,10 @@ END;
 /
 
 
------------------------------------------------------------------------------------------------------------------------------------------
+-- DML FOR SELLER ENTITY
 
 
 BEGIN
-    -- Inserting sellers with handling for potential duplicates
     BEGIN
         INSERT INTO seller (id, name, contact_no)
         VALUES ('APL', 'Apple Inc.', 8006927753);
@@ -412,7 +417,7 @@ BEGIN
         VALUES ('NIK', 'Nike', 8008066453);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike Inc. not inserted or phone number in use, not inserted..');
+            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike Inc. not inserted or phone number in use, not inserted.');
     END;
     
     BEGIN
@@ -420,7 +425,7 @@ BEGIN
         VALUES ('VIC', 'Vicks', 8003621683);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike. not inserted or phone number in use, not inserted..');
+            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike. not inserted or phone number in use, not inserted.');
     END;
     
     BEGIN
@@ -435,7 +440,7 @@ END;
 /
 
 
--------------------------------------------------------------------------------------------------------
+-- DML FOR PRODUCT ENTITY
 
 
 BEGIN
@@ -514,19 +519,14 @@ END;
 /
 
 
--------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
-
+-- DML FOR CUSTOMER_ORDER ENTITY
 
 BEGIN
-    -- Assigning "Delivered" status to 7 orders
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
-        VALUES ('ORD001', 'C001', TO_DATE('2023-03-11', 'YYYY-MM-DD'), 'DELIVERED');
+        VALUES ('ORD001', 'C001', TO_DATE('2023-03-16', 'YYYY-MM-DD'), 'DELIVERED');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate order ORD001 not inserted.');
     END;
@@ -573,7 +573,6 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Duplicate order ORD007 not inserted.');
     END;
 
-    -- Assigning "Shipped" status to 3 orders
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD008', 'C002', TO_DATE('2023-03-16', 'YYYY-MM-DD'), 'SHIPPED');
@@ -597,8 +596,8 @@ BEGIN
 END;
 /
 
----------------------------------------------------------------------------------
 
+-- DML FOR ORDER_PRODUCT ENTITY
 
 BEGIN
     BEGIN
@@ -753,10 +752,7 @@ END;
 /
 
 
-
-
-
---------------------------------------------------------------------------------------------------------------------
+-- DML FOR STORE ENTITY
 
 BEGIN
     -- Inserting UPS in Boston
@@ -792,10 +788,7 @@ END;
 /
 
 
-
----------------------------------------------------------------------------------------------------------------------
-
-
+-- DML FOR RETURN ENTITY
 
 
 BEGIN
@@ -834,43 +827,59 @@ END;
 
 
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- DML FOR FEEDBACK ENTITY
 
 
 BEGIN
     -- Feedback 1
-    BEGIN
-        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
-        VALUES ('FB001', 'C001', 'ST001', 4.5, 'Great service and quick delivery.');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB001 not inserted.');
-    END;
+    MERGE INTO feedback f
+    USING (SELECT 'FB001' AS id, 'C001' AS customer_id, 'ST001' AS store_id, 4.5 AS customer_rating, 'Great service and staff very helpful.' AS Review FROM dual) new_fb
+    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
+    WHEN MATCHED THEN
+        UPDATE SET f.Review = new_fb.Review,
+	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
+    WHEN NOT MATCHED THEN
+        INSERT (id, customer_id, store_id, customer_rating, Review)
+        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
 
     -- Feedback 2
-    BEGIN
-        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
-        VALUES ('FB002', 'C002', 'ST002', 3.0, 'Staffs not helpful.');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB002 not inserted.');
-    END;
+    MERGE INTO feedback f
+    USING (SELECT 'FB002' AS id, 'C002' AS customer_id, 'ST002' AS store_id, 3.0 AS customer_rating, 'Staffs not helpful.' AS Review FROM dual) new_fb
+    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
+    WHEN MATCHED THEN
+ 	UPDATE SET f.Review = new_fb.Review,
+	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
+    WHEN NOT MATCHED THEN
+        INSERT (id, customer_id, store_id, customer_rating, Review)
+        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
 
     -- Feedback 3
-    BEGIN
-        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
-        VALUES ('FB003', 'C003', 'ST001', 5.0, 'Absolutely love it! Highly recommend.');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB003 not inserted.');
-    END;
+    MERGE INTO feedback f
+    USING (SELECT 'FB003' AS id, 'C003' AS customer_id, 'ST001' AS store_id, 5.0 AS customer_rating, 'Absolutely love it! Highly recommend.' AS Review FROM dual) new_fb
+    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
+    WHEN MATCHED THEN
+ 	UPDATE SET f.Review = new_fb.Review,
+	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
+    WHEN NOT MATCHED THEN
+        INSERT (id, customer_id, store_id, customer_rating, Review)
+        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
+
 
     -- Feedback 4
-    BEGIN
-        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
-        VALUES ('FB004', 'C001', 'ST003', 4.0, 'Very-helpful and friendly staff.');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB004 not inserted.');
-    END;
+    MERGE INTO feedback f
+    USING (SELECT 'FB004' AS id, 'C001' AS customer_id, 'ST003' AS store_id, 4.0 AS customer_rating, 'Very-helpful and friendly staff.' AS Review FROM dual) new_fb
+    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
+    WHEN MATCHED THEN
+ 	UPDATE SET f.Review = new_fb.Review,
+	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
+    WHEN NOT MATCHED THEN
+        INSERT (id, customer_id, store_id, customer_rating, Review)
+        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
+
+
 END;
 /
+
 
 
 

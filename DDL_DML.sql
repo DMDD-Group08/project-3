@@ -85,10 +85,10 @@ BEGIN
     IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE order_product (
             id VARCHAR2(10) CONSTRAINT order_product_pk PRIMARY KEY,
-            order_id VARCHAR2(10) NOT NULL,
+            customer_order_id VARCHAR2(10) NOT NULL,
             product_id VARCHAR2(10) NOT NULL,
             quantity NUMBER(3) NOT NULL  CHECK (quantity > 0 ),
-            CONSTRAINT fk_order_product_order FOREIGN KEY (order_id) REFERENCES customer_order(id),
+            CONSTRAINT fk_order_product_order FOREIGN KEY (customer_order_id) REFERENCES customer_order(id),
             CONSTRAINT fk_order_product_product FOREIGN KEY (product_id) REFERENCES product(id)
         )';
     ELSE
@@ -174,7 +174,7 @@ END;
 
 --------------------------------------------------------------------------
 
-COMMENT ON COLUMN return.id IS 'Unique identifier for each return record';
+COMMENT ON COLUMN return.id IS 'Unique identifier for each return record(PK)';
 COMMENT ON COLUMN return.reason IS 'Description of the reason for the return';
 COMMENT ON COLUMN return.return_date IS 'Date when the return was requested';
 COMMENT ON COLUMN return.refund_status IS 'Current status of the refund, can be IN_PROGRESS or SUCCESSFUL';
@@ -182,21 +182,21 @@ COMMENT ON COLUMN return.quantity_returned IS 'Number of items returned';
 COMMENT ON COLUMN return.processing_fee IS 'Fee charged for processing the return, if applicable';
 COMMENT ON COLUMN return.request_accepted IS 'Indicates if the return request has been accepted (1) or not (0)';
 COMMENT ON COLUMN return.seller_refund IS 'Indicates if the seller agrees to refund (1) or not (0)';
-COMMENT ON COLUMN return.store_id IS 'Identifier of the store from which the item was purchased';
-COMMENT ON COLUMN return.order_product_id IS 'Identifier of the ordered product being returned';
+COMMENT ON COLUMN return.store_id IS 'Identifier of the store from which the item was purchased(FK)';
+COMMENT ON COLUMN return.order_product_id IS 'Identifier of the ordered product being returned(FK)';
 
 
 
 
-COMMENT ON COLUMN feedback.id IS 'Unique identifier for each feedback record';
+COMMENT ON COLUMN feedback.id IS 'Unique identifier for each feedback record(PK)';
 COMMENT ON COLUMN feedback.customer_id IS 'Identifier of the customer providing feedback';
-COMMENT ON COLUMN feedback.store_id IS 'Identifier of the store to which the feedback is directed';
+COMMENT ON COLUMN feedback.store_id IS 'Identifier of the store to which the feedback is directed(FK)';
 COMMENT ON COLUMN feedback.customer_rating IS 'Numerical rating given by the customer, ranging from 1.0 to 5.0';
 COMMENT ON COLUMN feedback.Review IS 'Textual review provided by the customer describing their experience';
 
 
 
-COMMENT ON COLUMN store.id IS 'Unique identifier for each store';
+COMMENT ON COLUMN store.id IS 'Unique identifier for each store(PK)';
 COMMENT ON COLUMN store.name IS 'Name of the store';
 COMMENT ON COLUMN store.contact_no IS 'Contact number for the store, must be unique';
 COMMENT ON COLUMN store.address_line IS 'Address line for the store location';
@@ -207,26 +207,26 @@ COMMENT ON COLUMN store.accepting_returns IS 'Indicates if the store accepts ret
 
 
 
-COMMENT ON COLUMN discount.id IS 'Unique identifier for each discount record';
-COMMENT ON COLUMN discount.category_id IS 'Identifier of the category to which the discount applies';
+COMMENT ON COLUMN discount.id IS 'Unique identifier for each discount record(PK)';
+COMMENT ON COLUMN discount.category_id IS 'Identifier of the category to which the discount applies(FK)';
 COMMENT ON COLUMN discount.discount_rate IS 'Percentage rate of the discount, must be more than 0 and less than 100';
 COMMENT ON COLUMN discount.start_date IS 'The start date from which the discount is applicable';
 COMMENT ON COLUMN discount.end_date IS 'The end date until which the discount is applicable';
 COMMENT ON TABLE discount IS 'Constraints: disend_date_later_than_start_date_CK ensures that the start date is on or before the end date.';
 
 
-COMMENT ON COLUMN product.id IS 'Unique identifier for each product';
+COMMENT ON COLUMN product.id IS 'Unique identifier for each product(PK)';
 COMMENT ON COLUMN product.name IS 'Name of the product';
 COMMENT ON COLUMN product.price IS 'Price of the product';
 COMMENT ON COLUMN product.mfg_date IS 'Manufacturing date of the product';
 COMMENT ON COLUMN product.exp_date IS 'Expiration date of the product, if applicable';
-COMMENT ON COLUMN product.category_id IS 'Identifier for the category of the product';
-COMMENT ON COLUMN product.seller_id IS 'Identifier for the seller of the product';
+COMMENT ON COLUMN product.category_id IS 'Identifier for the category of the product(FK)';
+COMMENT ON COLUMN product.seller_id IS 'Identifier for the seller of the product(FK)';
 COMMENT ON COLUMN product.exp_date IS 'Ensures the expiration date is later than the manufacturing date, if expiration date is specified';
 
 
 
-COMMENT ON COLUMN category.ID IS 'Unique identifier for each category';
+COMMENT ON COLUMN category.ID IS 'Unique identifier for each category(PK)';
 COMMENT ON COLUMN category.name IS 'Name of the category, must be unique';
 COMMENT ON COLUMN category.return_by_days IS 'Number of days within which items of this category can be returned, must be between 1 and 99';
 
@@ -244,12 +244,21 @@ COMMENT ON COLUMN customer.state IS 'State part of the customers address';
 COMMENT ON COLUMN customer.zip_code IS 'ZIP code part of the customers address';
 
 
-COMMENT ON COLUMN seller.id IS 'Unique identifier for each seller';
+COMMENT ON COLUMN seller.id IS 'Unique identifier for each seller(PK)';
 COMMENT ON COLUMN seller.name IS 'Name of the seller';
 COMMENT ON COLUMN seller.contact_no IS 'Contact number of the seller, must be unique';
 
+COMMENT ON COLUMN customer_order.id IS 'Unique identifier for each customer order(PK)';
+COMMENT ON COLUMN customer_order.customer_id IS 'Reference to the customer who placed the order(FK)';
+COMMENT ON COLUMN customer_order.order_date IS 'Date when the order was placed';
+COMMENT ON COLUMN customer_order.status IS 'Current status of the order, which can be DELIVERED, IN_TRANSIT, SHIPPED, or ORDER_PLACED';
 
---------------------------------------------------------------------------------
+
+COMMENT ON COLUMN order_product.id IS 'Unique identifier for each order-product relation record(PK)';
+COMMENT ON COLUMN order_product.customer_order_id IS 'Reference to the customer order this product is part of(FK)';
+COMMENT ON COLUMN order_product.product_id IS 'Reference to the product included in the order(FK)';
+COMMENT ON COLUMN order_product.quantity IS 'Quantity of the product ordered';
+-----------------------------------------------------------------------------------------------------------------
 BEGIN
     BEGIN
         INSERT INTO customer (id, name, contact_no, date_of_birth, email_id, joined_date, address_line, city, state, zip_code)
@@ -591,17 +600,16 @@ END;
 ---------------------------------------------------------------------------------
 
 
-
 BEGIN
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0001', 'ORD001', 'PROD001', 3);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0001 not inserted.');
     END;
     
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0002', 'ORD001', 'PROD002', 1);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0002 not inserted.');
@@ -609,28 +617,28 @@ BEGIN
     
     -- Order 2 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0003', 'ORD002', 'PROD003', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0003 not inserted.');
     END;
     
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0004', 'ORD002', 'PROD004', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0004 not inserted.');
     END;
     
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0005', 'ORD003', 'PROD005', 1);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0005 not inserted.');
     END;
     
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0006', 'ORD003', 'PROD006', 3);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0006 not inserted.');
@@ -638,14 +646,14 @@ BEGIN
 
     -- Order 4 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0007', 'ORD004', 'PROD007', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0007 not inserted.');
     END;
     
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0008', 'ORD004', 'PROD008', 1);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0008 not inserted.');
@@ -653,14 +661,14 @@ BEGIN
 
     -- Order 5 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0009', 'ORD005', 'PROD009', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0009 not inserted.');
     END;
     
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0010', 'ORD005', 'PROD001', 3);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0010 not inserted.');
@@ -668,14 +676,14 @@ BEGIN
     
     -- Order 6 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0011', 'ORD006', 'PROD005', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0011 not inserted.');
     END;
 
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0012', 'ORD006', 'PROD006', 3);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0012 not inserted.');
@@ -683,14 +691,14 @@ BEGIN
 
     -- Order 7 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0013', 'ORD007', 'PROD001', 1);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0013 not inserted.');
     END;
 
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0014', 'ORD007', 'PROD002', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0014 not inserted.');
@@ -698,14 +706,14 @@ BEGIN
 
     -- Order 8 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0015', 'ORD008', 'PROD003', 3);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0015 not inserted.');
     END;
 
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0016', 'ORD008', 'PROD004', 1);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0016 not inserted.');
@@ -713,14 +721,14 @@ BEGIN
 
     -- Order 9 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0017', 'ORD009', 'PROD005', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0017 not inserted.');
     END;
 
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0018', 'ORD009', 'PROD006', 3);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0018 not inserted.');
@@ -728,14 +736,14 @@ BEGIN
 
     -- Order 10 Product Associations
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0019', 'ORD010', 'PROD001', 1);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0019 not inserted.');
     END;
 
     BEGIN
-        INSERT INTO order_product (id, order_id, product_id, quantity)
+        INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0020', 'ORD010', 'PROD002', 2);
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0020 not inserted.');
@@ -865,12 +873,5 @@ END;
 /
 
 
-
-
-
-
-
-
---------------------------------------------------------------------------------------------------------------------------
 
 

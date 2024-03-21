@@ -138,7 +138,7 @@ BEGIN
             customer_id VARCHAR2(10) NOT NULL,
             store_id VARCHAR2(10) NOT NULL,
             customer_rating NUMBER(2,1) NOT NULL CHECK (customer_rating >= 1.0 AND customer_rating <= 5.0),
-            Review VARCHAR2(500) NOT NULL,
+            Review VARCHAR2(500),
             CONSTRAINT fk_feedback_customer FOREIGN KEY (customer_id) REFERENCES customer(id),
             CONSTRAINT fk_feedback_order FOREIGN KEY (store_id) REFERENCES store(id)
         )';
@@ -1016,50 +1016,47 @@ END;
 
 BEGIN
     -- Feedback 1
-    MERGE INTO feedback f
-    USING (SELECT 'FB001' AS id, 'C001' AS customer_id, 'ST001' AS store_id, 4.5 AS customer_rating, 'Great service and staff very helpful.' AS Review FROM dual) new_fb
-    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
-    WHEN MATCHED THEN
-        UPDATE SET f.Review = new_fb.Review,
-	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
-    WHEN NOT MATCHED THEN
-        INSERT (id, customer_id, store_id, customer_rating, Review)
-        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
+    BEGIN
+        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
+        VALUES ('FB001', 'C001', 'ST001', 4.5, 'Great service and staff very helpful.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB001 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
+    END;
 
     -- Feedback 2
-    MERGE INTO feedback f
-    USING (SELECT 'FB002' AS id, 'C002' AS customer_id, 'ST002' AS store_id, 3.0 AS customer_rating, 'Staffs not helpful.' AS Review FROM dual) new_fb
-    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
-    WHEN MATCHED THEN
- 	UPDATE SET f.Review = new_fb.Review,
-	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
-    WHEN NOT MATCHED THEN
-        INSERT (id, customer_id, store_id, customer_rating, Review)
-        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
+    BEGIN
+        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
+        VALUES ('FB002', 'C002', 'ST002', 3.0, 'Staffs not helpful.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB002 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
+    END;
 
     -- Feedback 3
-    MERGE INTO feedback f
-    USING (SELECT 'FB003' AS id, 'C003' AS customer_id, 'ST001' AS store_id, 5.0 AS customer_rating, 'Absolutely love it! Highly recommend.' AS Review FROM dual) new_fb
-    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
-    WHEN MATCHED THEN
- 	UPDATE SET f.Review = new_fb.Review,
-	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
-    WHEN NOT MATCHED THEN
-        INSERT (id, customer_id, store_id, customer_rating, Review)
-        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
-
+    BEGIN
+        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
+        VALUES ('FB003', 'C003', 'ST001', 5.0, 'Absolutely love it! Highly recommend.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB003 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
+    END;
 
     -- Feedback 4
-    MERGE INTO feedback f
-    USING (SELECT 'FB004' AS id, 'C001' AS customer_id, 'ST003' AS store_id, 4.0 AS customer_rating, 'Very-helpful and friendly staff.' AS Review FROM dual) new_fb
-    ON (f.customer_id = new_fb.customer_id AND f.store_id = new_fb.store_id)
-    WHEN MATCHED THEN
- 	UPDATE SET f.Review = new_fb.Review,
-	f.customer_rating = (f.customer_rating + new_fb.customer_rating) / 2
-    WHEN NOT MATCHED THEN
-        INSERT (id, customer_id, store_id, customer_rating, Review)
-        VALUES (new_fb.id, new_fb.customer_id, new_fb.store_id, new_fb.customer_rating, new_fb.Review);
-
-
+    BEGIN
+        INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
+        VALUES ('FB004', 'C001', 'ST003', 4.0, 'Very-helpful and friendly staff.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB004 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
+    END;
 END;
 /

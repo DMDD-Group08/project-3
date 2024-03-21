@@ -57,7 +57,8 @@ BEGIN
             category_id VARCHAR2(10) NOT NULL,
             seller_id VARCHAR2(10) NOT NULL,
             CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES category(id),
-            CONSTRAINT fk_product_seller FOREIGN KEY (seller_id) REFERENCES seller(id)
+            CONSTRAINT fk_product_seller FOREIGN KEY (seller_id) REFERENCES seller(id),
+            CONSTRAINT productname_seller_unique UNIQUE (name, seller_id)
         )';
         EXECUTE IMMEDIATE 'ALTER TABLE product
         ADD CONSTRAINT 
@@ -140,7 +141,8 @@ BEGIN
             customer_rating NUMBER(2,1) NOT NULL CHECK (customer_rating >= 1.0 AND customer_rating <= 5.0),
             Review VARCHAR2(500),
             CONSTRAINT fk_feedback_customer FOREIGN KEY (customer_id) REFERENCES customer(id),
-            CONSTRAINT fk_feedback_order FOREIGN KEY (store_id) REFERENCES store(id)
+            CONSTRAINT fk_feedback_order FOREIGN KEY (store_id) REFERENCES store(id),
+            CONSTRAINT customer_store_unique UNIQUE (customer_id, store_id)
         )';
     ELSE
         DBMS_OUTPUT.PUT_LINE('Table feedback already exists.');
@@ -159,7 +161,7 @@ BEGIN
         request_accepted NUMBER(1) CHECK (request_accepted IN (0, 1)),
         seller_refund NUMBER(1) CHECK (seller_refund IN (0, 1)),
         store_id VARCHAR(10) NOT NULL,
-        order_product_id VARCHAR(10) NOT NULL,
+        order_product_id VARCHAR(10) NOT NULL UNIQUE,
         CONSTRAINT fk_return_order_product FOREIGN KEY (order_product_id) REFERENCES order_product(id),
         CONSTRAINT return_store_fk FOREIGN KEY (store_id) REFERENCES store(id)
     )';
@@ -259,7 +261,7 @@ COMMENT ON COLUMN order_product.customer_order_id IS 'Reference to the customer 
 COMMENT ON COLUMN order_product.product_id IS 'Reference to the product included in the order(FK)';
 COMMENT ON COLUMN order_product.quantity IS 'Quantity of the product ordered';
 
-
+desc order_product;
 ----------------------------------------------------------                           DML STATEMENTS                   ---------------------------------------------------------------------
 
 -- THE FOLLOWING DML STATEMENTS WILL CHECK FOR PRIMARY AND UNIQUE KEY CONSTRAINS(PHONE NO, EMAIL-ID) BEFORE INSERTING ROWNS INTO CORRESPONDING ENTITES. THUS PREVENTING DUPLICATE ENTRIES
@@ -1060,3 +1062,201 @@ BEGIN
     END;
 END;
 /
+
+
+-------------------------------- STORED PROCEDURES --------------------------------------------------
+
+--------------------- UPDATE_SELLER_REFUND procedure
+CREATE OR REPLACE PROCEDURE UPDATE_SELLER_REFUND (
+    return_id         IN return.id%TYPE,
+    seller_refund_boolean IN return.seller_refund%TYPE
+) AS
+BEGIN
+    UPDATE return
+    SET
+        seller_refund = seller_refund_boolean
+    WHERE
+        id = return_id;
+    COMMIT;
+    dbms_output.put_line('Seller refund updated successfully.');
+EXCEPTION
+    WHEN dup_val_on_index THEN
+        dbms_output.put_line('Primary/Unique key violation occured. Make sure to enter correct values.');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Something else went wrong - '
+                             || sqlcode
+                             || ' : '
+                             || sqlerrm);
+END;
+/
+------------------------ create_return procedure
+
+CREATE OR REPLACE PROCEDURE create_return (
+    reason            IN return.reason%TYPE,
+    quantity_returned IN return.quantity_returned%TYPE,
+    store_id          IN return.store_id%TYPE,
+    order_product_id  IN return.order_product_id%TYPE,
+    last_return_id    OUT NUMBER
+) AS
+BEGIN
+    SELECT MAX(ROWNUM) into last_return_id FROM return;
+ 
+    INSERT INTO return (
+        id,
+        reason,
+        return_date,
+        quantity_returned,
+        store_id,
+        order_product_id
+    ) VALUES (
+        'RET00' || to_char(last_return_id + 1),
+        -- NEXT AUTOMATED RETURN_ID 
+        reason,
+        TO_DATE(sysdate, 'YYYY-MM-DD'),
+        quantity_returned,
+        store_id,
+        order_product_id
+    );
+ 
+    COMMIT;
+EXCEPTION
+    WHEN dup_val_on_index THEN
+        dbms_output.put_line('Primary/Unique key violation occured. Make sure to enter correct values.');
+    WHEN OTHERS THEN -- catch all other exceptions
+        IF sqlcode = -2291 THEN -- Handle foreign key constraint violation
+            dbms_output.put_line('Foreign key constraint violation occurred.');
+        ELSE
+            dbms_output.put_line('Something else went wrong - '
+                                 || sqlcode
+                                 || ' : '
+                                 || sqlerrm);
+        END IF;
+END;
+/
+
+
+-------------------- submit_feedback procedure
+CREATE OR REPLACE PROCEDURE submit_feedback (
+    last_feedback_id OUT NUMBER,
+    customer_id      IN feedback.customer_id%TYPE,
+    store_id         IN feedback.store_id%TYPE,
+    customer_rating  IN feedback.customer_rating%TYPE,
+    review           IN feedback.review%TYPE
+) AS
+BEGIN
+    SELECT MAX(ROWNUM) into last_feedback_id FROM feedback;
+ 
+    INSERT INTO feedback (
+        id,
+        customer_id,
+        store_id,
+        customer_rating,
+        review
+    ) VALUES (
+        'FB00' || to_char(last_feedback_id + 1), -- NEXT AUTOMATED FEEDBACK_ID 
+        customer_id,
+        store_id,
+        customer_rating,
+        review
+    );
+ 
+    COMMIT;
+EXCEPTION
+    WHEN dup_val_on_index THEN
+        dbms_output.put_line('Primary/Unique key violation occured. Make sure to enter correct values.');
+    WHEN OTHERS THEN -- catch all other exceptions
+        IF sqlcode = -2291 THEN -- Handle foreign key constraint violation
+            dbms_output.put_line('Foreign key constraint violation occurred.');
+        ELSE
+            dbms_output.put_line('Something else went wrong - '
+                                 || sqlcode
+                                 || ' : '
+                                 || sqlerrm);
+        END IF;
+END;
+/ 
+
+----------------- update_store_availability procedure
+CREATE OR REPLACE PROCEDURE update_store_availability (
+    store_id         IN store.id%TYPE,
+    accepting_return IN store.accepting_returns%TYPE
+) AS
+BEGIN
+    UPDATE store
+    SET
+        accepting_returns = accepting_return
+    WHERE
+        id = store_id;
+ 
+    COMMIT;
+    dbms_output.put_line('Store status updated successfully.');
+EXCEPTION
+    WHEN dup_val_on_index THEN
+        dbms_output.put_line('Primary/Unique key violation occured. Make sure to enter correct values.');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Something else went wrong - '
+                             || sqlcode
+                             || ' : '
+                             || sqlerrm);
+END;
+/
+ 
+------------------ ADD_PRODUCT procedure
+CREATE OR REPLACE PROCEDURE ADD_PRODUCT (
+    last_product_id OUT NUMBER,
+    category_id_ OUT product.category_id%TYPE,
+    name      IN product.name%TYPE,
+    price         IN product.price%TYPE,
+    mfg_date  IN product.mfg_date%TYPE,
+    exp_date           IN product.exp_date%TYPE,
+    category_name IN category.name%TYPE,
+    seller_id IN product.seller_id%TYPE
+) AS 
+BEGIN
+    SELECT id into category_id_ from category where name=category_name;
+    SELECT MAX(ROWNUM) into last_product_id FROM product;
+ 
+    INSERT INTO product (
+        id,
+        name,
+        price,
+        mfg_date,
+        exp_date,
+        category_id,
+        seller_id
+    ) VALUES (
+        'PROD00' || to_char(last_product_id + 1), -- NEXT AUTOMATED PRODUCT_ID 
+        name,
+        price,
+        mfg_date,
+        exp_date,
+        category_id_,
+        seller_id
+    );
+ 
+    COMMIT;
+EXCEPTION
+    WHEN dup_val_on_index THEN
+        dbms_output.put_line('Primary/Unique key violation occured. Make sure to enter correct values.');
+    WHEN OTHERS THEN -- catch all other exceptions
+        IF sqlcode = -2291 THEN -- Handle foreign key constraint violation
+            dbms_output.put_line('Foreign key constraint violation occurred.');
+        ELSE
+            dbms_output.put_line('Something else went wrong - '
+                                 || sqlcode
+                                 || ' : '
+                                 || sqlerrm);
+        END IF;
+END;
+/
+
+-- CUSTOMER_USER
+GRANT EXECUTE ON BUSINESS_MANAGER.CREATE_RETURN TO CUSTOMER_USER;
+GRANT EXECUTE ON BUSINESS_MANAGER.SUBMIT_FEEDBACK TO CUSTOMER_USER;
+
+-- STORE_USER
+GRANT EXECUTE ON BUSINESS_MANAGER.UPDATE_STORE_AVAILABILITY TO STORE_USER;
+
+-- SELLER_USER
+GRANT EXECUTE ON BUSINESS_MANAGER.ADD_PRODUCT TO SELLER_USER;
+GRANT EXECUTE ON BUSINESS_MANAGER.UPDATE_SELLER_REFUND TO SELLER_USER;

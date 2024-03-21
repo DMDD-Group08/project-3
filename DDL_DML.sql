@@ -272,6 +272,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Alice Michel or phone number or email already in use.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
@@ -280,6 +282,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Bob Santos or phone number or email already in use.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
@@ -288,6 +292,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Charlie Heisenberg or phone number or email already in use.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 END;
 /
@@ -300,6 +306,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Food/Beverages.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
@@ -308,6 +316,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Electronics.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
@@ -316,6 +326,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Clothing/Apparel.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
@@ -324,6 +336,8 @@ BEGIN
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate entry for Healthcare.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     
@@ -337,64 +351,91 @@ BEGIN
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC001', 'SM001', 10.00, TO_DATE('2024-01-01', 'YYYY-MM-DD'), TO_DATE('2024-01-31', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC001 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC001 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC002', 'SM001', 15.00, TO_DATE('2024-03-10', 'YYYY-MM-DD'), TO_DATE('2024-03-18', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC002 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC002 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC003', 'SM001', 20.00, TO_DATE('2024-06-01', 'YYYY-MM-DD'), TO_DATE('2024-06-30', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC003 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC003 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC004', 'SM002', 5.00, TO_DATE('2024-02-01', 'YYYY-MM-DD'), TO_DATE('2024-02-28', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC004 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC004 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC005', 'SM002', 10.00, TO_DATE('2024-05-01', 'YYYY-MM-DD'), TO_DATE('2024-05-15', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC005 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC005 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC006', 'SM002', 15.00, TO_DATE('2024-11-01', 'YYYY-MM-DD'), TO_DATE('2024-11-30', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC006 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC006 not inserted.');
+        WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC007', 'SM003', 10.00, TO_DATE('2024-04-01', 'YYYY-MM-DD'), TO_DATE('2024-04-30', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC007 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC007 not inserted.');
+        WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC008', 'SM003', 20.00, TO_DATE('2024-07-01', 'YYYY-MM-DD'), TO_DATE('2024-07-31', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC008 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC008 not inserted.');
+        WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO discount (id, category_id, discount_rate, start_date, end_date)
         VALUES ('DSC009', 'SM003', 25.00, TO_DATE('2024-10-01', 'YYYY-MM-DD'), TO_DATE('2024-10-31', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC009 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate discount DSC009 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 END;
 /
@@ -410,6 +451,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate seller Apple Inc or phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
@@ -418,6 +461,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike Inc. not inserted or phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
@@ -426,6 +471,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike. not inserted or phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert UPS in Boston due to constraint violation or invalid data type.');
     END;
     
     BEGIN
@@ -434,6 +481,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate seller Whole Foodsor phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
 END;
@@ -448,24 +497,33 @@ BEGIN
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
         VALUES ('PROD001', 'Milk', 2.99, 'SM001', 'WHO', TO_DATE('2023-03-10', 'YYYY-MM-DD'), TO_DATE('2023-03-29', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD001-Milk not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD001-Milk not inserted.');
+        WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     -- Inserting Bread with mfg_date and exp_date
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
         VALUES ('PROD002', 'Bread', 3.49, 'SM001', 'WHO', TO_DATE('2023-03-10', 'YYYY-MM-DD'), TO_DATE('2023-03-25', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD002-Bread not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD002-Bread not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     -- Inserting Cake with mfg_date and exp_date
     BEGIN
-            INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
-            VALUES ('PROD003', 'Cake', 15.00, 'SM001', 'WHO', TO_DATE('2023-03-11', 'YYYY-MM-DD'), TO_DATE('2023-03-25', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
+        INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
+        VALUES ('PROD003', 'Cake', 15.00, 'SM001', 'WHO', TO_DATE('2023-03-11', 'YYYY-MM-DD'), TO_DATE('2023-03-25', 'YYYY-MM-DD'));
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate product PROD003-Cake not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 END;
 /
@@ -476,44 +534,62 @@ BEGIN
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD004', 'iPhone', 999.00, 'SM002', 'APL', TO_DATE('2024-02-15', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD004-iPhone not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD004-iPhone not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD005', 'Laptop', 1300.00, 'SM002', 'APL', TO_DATE('2024-01-10', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD005-Laptop not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD005-Laptop not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD006', 'Watches', 250.00, 'SM002', 'APL', TO_DATE('2024-02-05', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD006-Watches not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD006-Watches not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     -- Clothing/Apparel Products
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD007', 'Shoes', 120.00, 'SM003', 'NIK', TO_DATE('2024-03-01', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD007-Shoes not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD007-Shoes not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD008', 'Jacket', 250.00, 'SM003', 'NIK', TO_DATE('2024-02-20', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD008-Jacket not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD008-Jacket not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD009', 'Trousers', 85.00, 'SM003', 'NIK', TO_DATE('2024-01-25', 'YYYY-MM-DD'));
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD009-Trousers not inserted.');
+    EXCEPTION WHEN 
+        DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD009-Trousers not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 END;
 /
@@ -527,71 +603,101 @@ BEGIN
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD001', 'C001', TO_DATE('2023-03-16', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD001 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD001 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD002', 'C002', TO_DATE('2023-03-12', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD002 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD002 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD003', 'C003', TO_DATE('2023-03-13', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD003 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD003 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD004', 'C001', TO_DATE('2023-03-14', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD004 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD004 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD005', 'C002', TO_DATE('2023-03-18', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD005 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD005 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD006', 'C003', TO_DATE('2023-03-11', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD006 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD006 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD007', 'C001', TO_DATE('2023-03-17', 'YYYY-MM-DD'), 'DELIVERED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD007 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD007 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD008', 'C002', TO_DATE('2023-03-16', 'YYYY-MM-DD'), 'SHIPPED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD008 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD008 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD009', 'C003', TO_DATE('2023-03-15', 'YYYY-MM-DD'), 'SHIPPED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD009 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD009 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO customer_order (id, customer_id, order_date, status)
         VALUES ('ORD010', 'C001', TO_DATE('2023-03-16', 'YYYY-MM-DD'), 'SHIPPED');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate order ORD010 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate order ORD010 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 END;
 /
@@ -603,149 +709,209 @@ BEGIN
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0001', 'ORD001', 'PROD001', 3);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0001 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0001 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0002', 'ORD001', 'PROD002', 1);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0002 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0002 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     -- Order 2 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0003', 'ORD002', 'PROD003', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0003 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0003 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0004', 'ORD002', 'PROD004', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0004 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0004 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0005', 'ORD003', 'PROD005', 1);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0005 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0005 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0006', 'ORD003', 'PROD006', 3);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0006 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0006 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     -- Order 4 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0007', 'ORD004', 'PROD007', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0007 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0007 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0008', 'ORD004', 'PROD008', 1);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0008 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0008 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     -- Order 5 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0009', 'ORD005', 'PROD009', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0009 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0009 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0010', 'ORD005', 'PROD001', 3);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0010 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0010 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     -- Order 6 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0011', 'ORD006', 'PROD005', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0011 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0011 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0012', 'ORD006', 'PROD006', 3);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0012 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0012 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     -- Order 7 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0013', 'ORD007', 'PROD001', 1);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0013 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0013 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0014', 'ORD007', 'PROD002', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0014 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0014 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     -- Order 8 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0015', 'ORD008', 'PROD003', 3);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0015 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0015 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0016', 'ORD008', 'PROD004', 1);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0016 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0016 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     -- Order 9 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0017', 'ORD009', 'PROD005', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0017 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0017 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0018', 'ORD009', 'PROD006', 3);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0018 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0018 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     -- Order 10 Product Associations
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0019', 'ORD010', 'PROD001', 1);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0019 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0019 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
 
     BEGIN
         INSERT INTO order_product (id, customer_order_id, product_id, quantity)
         VALUES ('OP0020', 'ORD010', 'PROD002', 2);
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0020 not inserted.');
+    EXCEPTION  
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for OP0020 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
 END;
@@ -762,6 +928,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate store ST001-UPS or phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
         
     END;
 
@@ -772,6 +940,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate store ST002-FedEx or phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
        
     END;
 
@@ -782,6 +952,8 @@ BEGIN
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
             DBMS_OUTPUT.PUT_LINE('Duplicate store ST003-Five Guys or phone number in use, not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
         
     END;
 END;
@@ -795,29 +967,41 @@ BEGIN
     BEGIN
         INSERT INTO return (id, reason, return_date, refund_status, quantity_returned, processing_fee, request_accepted, seller_refund, store_id, order_product_id)
         VALUES ('RET001', 'Alegeric to the product', TO_DATE('2023-03-22', 'YYYY-MM-DD'), 'SUCCESSFUL', 2, 5.00, 1, 1, 'ST001', 'OP0010');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate return RET001 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate return RET001 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO return (id, reason, return_date, refund_status, quantity_returned, processing_fee, request_accepted, seller_refund, store_id, order_product_id)
         VALUES ('RET002', 'Changed mind', TO_DATE('2023-03-22', 'YYYY-MM-DD'), 'SUCCESSFUL', 1, 0, 1, 1, 'ST002', 'OP0004');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate return RET002 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate return RET002 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
      BEGIN
         INSERT INTO return (id, reason, return_date, refund_status, quantity_returned, processing_fee, request_accepted, seller_refund, store_id, order_product_id)
         VALUES ('RET003', 'Product defect', TO_DATE('2023-03-21', 'YYYY-MM-DD'), 'SUCCESSFUL', 1, 0, 1, 1, 'ST003', 'OP0002');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate return RET003 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate return RET003 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     BEGIN
         INSERT INTO return (id, reason, return_date, refund_status, quantity_returned, processing_fee, request_accepted, seller_refund, store_id, order_product_id)
         VALUES ('RET004', 'Late delivery.', TO_DATE('2023-03-22', 'YYYY-MM-DD'), 'SUCCESSFUL', 1, 10.00, 1, 1, 'ST001', 'OP0006');
-    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate return RET004 not inserted.');
+    EXCEPTION 
+        WHEN DUP_VAL_ON_INDEX THEN
+            DBMS_OUTPUT.PUT_LINE('Duplicate return RET004 not inserted.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Failed to insert due to constraint violation or invalid data type.');
     END;
     
     
@@ -879,8 +1063,3 @@ BEGIN
 
 END;
 /
-
-
-
-
-

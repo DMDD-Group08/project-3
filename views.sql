@@ -22,7 +22,7 @@ GROUP BY store_id;
 
 -- Price Charged
 
-CREATE VIEW product_discount_association AS
+CREATE OR REPLACE VIEW product_discount_association AS
 SELECT p.id AS product_id,
        p.category_id,
        p.price,

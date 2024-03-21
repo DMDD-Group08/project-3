@@ -46,7 +46,7 @@ FROM order_product op
 JOIN customer_order o ON op.customer_order_id = o.id
 JOIN product_discount_association pda ON op.product_id = pda.product_id;
 
-CREATE VIEW order_total_price_per_unit AS
+CREATE OR REPLACE VIEW order_total_price_ AS
 SELECT customer_order_id,
        SUM(price_per_unit * quantity) AS total_price
 FROM order_product_actual_price_per_unit

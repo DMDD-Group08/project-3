@@ -32,7 +32,6 @@ LEFT JOIN discount d ON p.category_id = d.category_id
 LEFT JOIN customer_order o ON p.id = o.id
                       AND o.order_date BETWEEN d.start_date AND d.end_date;
 
-select * from customer_order;
  
 CREATE OR REPLACE VIEW order_product_actual_price_per_unit AS
 SELECT op.id AS order_product_id,
@@ -52,7 +51,6 @@ SELECT customer_order_id,
        SUM(price_per_unit * quantity) AS total_price
 FROM order_product_actual_price_per_unit
 GROUP BY customer_order_id;
-
 
 
 -- Refund Amount

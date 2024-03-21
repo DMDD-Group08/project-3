@@ -1,22 +1,22 @@
-Set serveroutput ON;
+SET SERVEROUTPUT ON;
 DECLARE
-    cnt NUMBER;
+    CNT NUMBER;
 BEGIN
     -- CATEGORY
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'CATEGORY';
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'CATEGORY';
     IF cnt = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE category (
-            id VARCHAR2(10) CONSTRAINT category_pk PRIMARY KEY,
+            ID VARCHAR2(10) CONSTRAINT category_pk PRIMARY KEY,
             name VARCHAR2(20) Unique NOT NULL,
-            return_by_days NUMBER(2) NOT NULL CHECK (return_by_days >= 0 AND return_by_days < 100)
+            return_by_days NUMBER(2) NOT NULL CHECK (return_by_days > 0 AND return_by_days < 100)
         )';
     ELSE
         DBMS_OUTPUT.PUT_LINE('Table category already exists.');
     END IF;
 
     -- CUSTOMER
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'CUSTOMER';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'CUSTOMER';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE customer (
             id VARCHAR2(10) CONSTRAINT customer_pk PRIMARY KEY,
             name VARCHAR2(50) NOT NULL,
@@ -34,8 +34,8 @@ BEGIN
     END IF;
 
     -- SELLER
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'SELLER';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'SELLER';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE seller (
             id VARCHAR2(10) CONSTRAINT seller_pk PRIMARY KEY,
             name       VARCHAR(20) NOT NULL,
@@ -46,8 +46,8 @@ BEGIN
     END IF;
 
     -- PRODUCT
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'PRODUCT';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'PRODUCT';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE product (
             id VARCHAR2(10) CONSTRAINT product_pk PRIMARY KEY,
             name VARCHAR2(20) NOT NULL,
@@ -61,14 +61,14 @@ BEGIN
         )';
         EXECUTE IMMEDIATE 'ALTER TABLE product
         ADD CONSTRAINT 
-        end_date_later_than_start_date_CK CHECK (mfg_date <= exp_date)'; 
+        end_date_later_than_start_date_CK CHECK (mfg_date < exp_date)'; 
     ELSE
         DBMS_OUTPUT.PUT_LINE('Table product already exists.');
     END IF;
 
     -- ORDER (CUSTOMER_ORDER to avoid SQL keyword conflict)
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'CUSTOMER_ORDER';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'CUSTOMER_ORDER';
+    IF CNT = 0 THEN
        EXECUTE IMMEDIATE 'CREATE TABLE customer_order (
         id VARCHAR2(10) CONSTRAINT order_pk PRIMARY KEY,
         customer_id VARCHAR2(10) NOT NULL,
@@ -81,13 +81,13 @@ BEGIN
     END IF;
 
     -- ORDER_PRODUCT
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'ORDER_PRODUCT';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'ORDER_PRODUCT';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE order_product (
             id VARCHAR2(10) CONSTRAINT order_product_pk PRIMARY KEY,
             order_id VARCHAR2(10) NOT NULL,
             product_id VARCHAR2(10) NOT NULL,
-            quantity NUMBER(3) NOT NULL,
+            quantity NUMBER(3) NOT NULL  CHECK (quantity > 0 ),
             CONSTRAINT fk_order_product_order FOREIGN KEY (order_id) REFERENCES customer_order(id),
             CONSTRAINT fk_order_product_product FOREIGN KEY (product_id) REFERENCES product(id)
         )';
@@ -96,12 +96,12 @@ BEGIN
     END IF;
 
     -- DISCOUNT
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'DISCOUNT';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'DISCOUNT';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE discount (
             id VARCHAR2(10) CONSTRAINT discount_pk PRIMARY KEY,
             category_id VARCHAR2(10) NOT NULL,
-            discount_rate NUMBER(3,1) NOT NULL CHECK (discount_rate >= 0 AND discount_rate < 100),
+            discount_rate NUMBER(3,1) NOT NULL CHECK (discount_rate > 0 AND discount_rate < 100),
             start_date DATE NOT NULL,
             end_date DATE NOT NULL,
             CONSTRAINT fk_discount_category FOREIGN KEY (category_id) REFERENCES category(id)
@@ -114,12 +114,12 @@ BEGIN
     END IF;
     
     -- STORE
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'STORE';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'STORE';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE store (
             id VARCHAR2(10) CONSTRAINT store_pk PRIMARY KEY,
             name              VARCHAR(20) NOT NULL,
-            contact_no        NUMBER(10) Unique NOT NULL,
+            contact_no        NUMBER(10)unique NOT NULL,
             address_line      VARCHAR(30) NOT NULL,
             city              VARCHAR(30) NOT NULL,
             state             VARCHAR(30) NOT NULL,
@@ -131,13 +131,13 @@ BEGIN
     END IF;
 
     -- FEEDBACK
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'FEEDBACK';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'FEEDBACK';
+    IF CNT = 0 THEN
         EXECUTE IMMEDIATE 'CREATE TABLE feedback (
             id VARCHAR2(10) CONSTRAINT feedback_pk PRIMARY KEY,
             customer_id VARCHAR2(10) NOT NULL,
             store_id VARCHAR2(10) NOT NULL,
-            customer_rating NUMBER(2,1) NOT NULL CHECK (customer_rating >= 0 AND customer_rating < 100),
+            customer_rating NUMBER(2,1) NOT NULL CHECK (customer_rating >= 1.0 AND customer_rating <= 5.0),
             Review VARCHAR2(500) NOT NULL,
             CONSTRAINT fk_feedback_customer FOREIGN KEY (customer_id) REFERENCES customer(id),
             CONSTRAINT fk_feedback_order FOREIGN KEY (store_id) REFERENCES store(id)
@@ -147,14 +147,14 @@ BEGIN
     END IF;
 
     -- RETURN
-    SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = 'RETURN';
-    IF cnt = 0 THEN
+    SELECT COUNT(*) INTO CNT FROM USER_TABLES WHERE TABLE_NAME = 'RETURN';
+    IF CNT = 0 THEN
       EXECUTE IMMEDIATE 'CREATE TABLE return (
         id VARCHAR2(10) CONSTRAINT return_pk PRIMARY KEY,
         reason VARCHAR(500) NOT NULL,
         return_date DATE NOT NULL,
         refund_status VARCHAR(20) CHECK (refund_status IN (''IN_PROGRESS'', ''SUCCESSFUL'')),
-        quantity_returned NUMBER(3) NOT NULL,
+        quantity_returned NUMBER(3) NOT NULL CHECK (quantity_returned > 0 ),
         processing_fee NUMBER(5, 2), -- not all returns will be successful so I put not, null,
         request_accepted NUMBER(1) CHECK (request_accepted IN (0, 1)),
         seller_refund NUMBER(1) CHECK (seller_refund IN (0, 1)),
@@ -174,20 +174,89 @@ END;
 
 --------------------------------------------------------------------------
 
+COMMENT ON COLUMN return.id IS 'Unique identifier for each return record';
+COMMENT ON COLUMN return.reason IS 'Description of the reason for the return';
+COMMENT ON COLUMN return.return_date IS 'Date when the return was requested';
+COMMENT ON COLUMN return.refund_status IS 'Current status of the refund, can be IN_PROGRESS or SUCCESSFUL';
+COMMENT ON COLUMN return.quantity_returned IS 'Number of items returned';
+COMMENT ON COLUMN return.processing_fee IS 'Fee charged for processing the return, if applicable';
+COMMENT ON COLUMN return.request_accepted IS 'Indicates if the return request has been accepted (1) or not (0)';
+COMMENT ON COLUMN return.seller_refund IS 'Indicates if the seller agrees to refund (1) or not (0)';
+COMMENT ON COLUMN return.store_id IS 'Identifier of the store from which the item was purchased';
+COMMENT ON COLUMN return.order_product_id IS 'Identifier of the ordered product being returned';
 
+
+
+
+COMMENT ON COLUMN feedback.id IS 'Unique identifier for each feedback record';
+COMMENT ON COLUMN feedback.customer_id IS 'Identifier of the customer providing feedback';
+COMMENT ON COLUMN feedback.store_id IS 'Identifier of the store to which the feedback is directed';
+COMMENT ON COLUMN feedback.customer_rating IS 'Numerical rating given by the customer, ranging from 1.0 to 5.0';
+COMMENT ON COLUMN feedback.Review IS 'Textual review provided by the customer describing their experience';
+
+
+
+COMMENT ON COLUMN store.id IS 'Unique identifier for each store';
+COMMENT ON COLUMN store.name IS 'Name of the store';
+COMMENT ON COLUMN store.contact_no IS 'Contact number for the store, must be unique';
+COMMENT ON COLUMN store.address_line IS 'Address line for the store location';
+COMMENT ON COLUMN store.city IS 'City where the store is located';
+COMMENT ON COLUMN store.state IS 'State where the store is located';
+COMMENT ON COLUMN store.zip_code IS 'ZIP code for the store location';
+COMMENT ON COLUMN store.accepting_returns IS 'Indicates if the store accepts returns (1) or not (0)';
+
+
+
+COMMENT ON COLUMN discount.id IS 'Unique identifier for each discount record';
+COMMENT ON COLUMN discount.category_id IS 'Identifier of the category to which the discount applies';
+COMMENT ON COLUMN discount.discount_rate IS 'Percentage rate of the discount, must be more than 0 and less than 100';
+COMMENT ON COLUMN discount.start_date IS 'The start date from which the discount is applicable';
+COMMENT ON COLUMN discount.end_date IS 'The end date until which the discount is applicable';
+COMMENT ON TABLE discount IS 'Constraints: disend_date_later_than_start_date_CK ensures that the start date is on or before the end date.';
+
+
+COMMENT ON COLUMN product.id IS 'Unique identifier for each product';
+COMMENT ON COLUMN product.name IS 'Name of the product';
+COMMENT ON COLUMN product.price IS 'Price of the product';
+COMMENT ON COLUMN product.mfg_date IS 'Manufacturing date of the product';
+COMMENT ON COLUMN product.exp_date IS 'Expiration date of the product, if applicable';
+COMMENT ON COLUMN product.category_id IS 'Identifier for the category of the product';
+COMMENT ON COLUMN product.seller_id IS 'Identifier for the seller of the product';
+COMMENT ON COLUMN product.exp_date IS 'Ensures the expiration date is later than the manufacturing date, if expiration date is specified';
+
+
+
+COMMENT ON COLUMN category.ID IS 'Unique identifier for each category';
+COMMENT ON COLUMN category.name IS 'Name of the category, must be unique';
+COMMENT ON COLUMN category.return_by_days IS 'Number of days within which items of this category can be returned, must be between 1 and 99';
+
+
+
+COMMENT ON COLUMN customer.id IS 'Unique identifier for each customer(PK)';
+COMMENT ON COLUMN customer.name IS 'Full name of the customer';
+COMMENT ON COLUMN customer.contact_no IS 'Contact number of the customer, must be unique';
+COMMENT ON COLUMN customer.date_of_birth IS 'Date of birth of the customer';
+COMMENT ON COLUMN customer.email_id IS 'Email address of the customer, must be unique';
+COMMENT ON COLUMN customer.joined_date IS 'Date when the customer joined or was registered';
+COMMENT ON COLUMN customer.address_line IS 'Address line for the customers residence';
+COMMENT ON COLUMN customer.city IS 'City part of the customers address';
+COMMENT ON COLUMN customer.state IS 'State part of the customers address';
+COMMENT ON COLUMN customer.zip_code IS 'ZIP code part of the customers address';
+
+
+COMMENT ON COLUMN seller.id IS 'Unique identifier for each seller';
+COMMENT ON COLUMN seller.name IS 'Name of the seller';
+COMMENT ON COLUMN seller.contact_no IS 'Contact number of the seller, must be unique';
+
+
+--------------------------------------------------------------------------------
 BEGIN
     BEGIN
         INSERT INTO customer (id, name, contact_no, date_of_birth, email_id, joined_date, address_line, city, state, zip_code)
         VALUES ('C001', 'Alice Michel', '9100000001', TO_DATE('1992-06-01', 'YYYY-MM-DD'), 'alice@gmail.com', TO_DATE('2022-01-10', 'YYYY-MM-DD'), '123 Harvard Ave', 'Boston', 'MA', '12345');
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Alice Michel.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number or email for Alice Michel.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Alice Michel or phone number or email already in use.');
     END;
 
     BEGIN
@@ -195,13 +264,7 @@ BEGIN
         VALUES ('C002', 'Bob Santos', '9200000002', TO_DATE('1988-08-15', 'YYYY-MM-DD'), 'bob@gmail.com', TO_DATE('2022-02-20', 'YYYY-MM-DD'), '456 Brokkline Rd', 'New York', 'NY', '23456');
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Bob Santos.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number or email for Bob Santos.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Bob Santos or phone number or email already in use.');
     END;
 
     BEGIN
@@ -209,13 +272,7 @@ BEGIN
         VALUES ('C003', 'Charlie Heisenberg', '9300000003', TO_DATE('1990-12-25', 'YYYY-MM-DD'), 'charlie@gmail.com', TO_DATE('2022-03-15', 'YYYY-MM-DD'), '789 Cocoa St', 'Chicago', 'IL', '34567');
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Charlie Heisenberg.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number or email for Charlie Heisenberg.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate entry for Charlie Heisenberg or phone number or email already in use..');
     END;
 END;
 /
@@ -338,13 +395,7 @@ BEGIN
         VALUES ('APL', 'Apple Inc.', 8006927753);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate seller Apple Inc. not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number for Apple Inc. not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate seller Apple Inc or phone number in use, not inserted.');
     END;
     
     BEGIN
@@ -352,13 +403,7 @@ BEGIN
         VALUES ('NIK', 'Nike', 8008066453);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike Inc. not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number for Nike. not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike Inc. not inserted or phone number in use, not inserted..');
     END;
     
     BEGIN
@@ -366,13 +411,7 @@ BEGIN
         VALUES ('VIC', 'Vicks', 8003621683);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike. not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number for Nike. not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate seller Nike. not inserted or phone number in use, not inserted..');
     END;
     
     BEGIN
@@ -380,13 +419,7 @@ BEGIN
         VALUES ('WHO', 'Whole Foods', 8005551212);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate seller Whole Foods. not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate phone number for Whole Foods. not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate seller Whole Foodsor phone number in use, not inserted.');
     END;
 
 END;
@@ -402,7 +435,7 @@ BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
         VALUES ('PROD001', 'Milk', 2.99, 'SM001', 'WHO', TO_DATE('2023-03-10', 'YYYY-MM-DD'), TO_DATE('2023-03-29', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Milk not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD001-Milk not inserted.');
     END;
     
     -- Inserting Bread with mfg_date and exp_date
@@ -410,7 +443,7 @@ BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
         VALUES ('PROD002', 'Bread', 3.49, 'SM001', 'WHO', TO_DATE('2023-03-10', 'YYYY-MM-DD'), TO_DATE('2023-03-25', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Bread not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD002-Bread not inserted.');
     END;
     
     -- Inserting Cake with mfg_date and exp_date
@@ -418,7 +451,7 @@ BEGIN
             INSERT INTO product (id, name, price, category_id, seller_id, mfg_date, exp_date)
             VALUES ('PROD003', 'Cake', 15.00, 'SM001', 'WHO', TO_DATE('2023-03-11', 'YYYY-MM-DD'), TO_DATE('2023-03-25', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate product Cake not inserted.');
+            DBMS_OUTPUT.PUT_LINE('Duplicate product PROD003-Cake not inserted.');
     END;
 END;
 /
@@ -430,21 +463,21 @@ BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD004', 'iPhone', 999.00, 'SM002', 'APL', TO_DATE('2024-02-15', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product iPhone not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD004-iPhone not inserted.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD005', 'Laptop', 1300.00, 'SM002', 'APL', TO_DATE('2024-01-10', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Laptop not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD005-Laptop not inserted.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD006', 'Watches', 250.00, 'SM002', 'APL', TO_DATE('2024-02-05', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Watches not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD006-Watches not inserted.');
     END;
     
     -- Clothing/Apparel Products
@@ -452,26 +485,25 @@ BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD007', 'Shoes', 120.00, 'SM003', 'NIK', TO_DATE('2024-03-01', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Shoes not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD007-Shoes not inserted.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD008', 'Jacket', 250.00, 'SM003', 'NIK', TO_DATE('2024-02-20', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Jacket not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD008-Jacket not inserted.');
     END;
     
     BEGIN
         INSERT INTO product (id, name, price, category_id, seller_id, mfg_date)
         VALUES ('PROD009', 'Trousers', 85.00, 'SM003', 'NIK', TO_DATE('2024-01-25', 'YYYY-MM-DD'));
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Duplicate product Trousers not inserted.');
+        DBMS_OUTPUT.PUT_LINE('Duplicate product PROD009-Trousers not inserted.');
     END;
 END;
 /
 
-SELECT* FROM PRODUCT;
 
 -------------------------------------------------------------------------------------------------------------------------
 
@@ -557,14 +589,6 @@ END;
 /
 
 ---------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
 
 
 
@@ -733,13 +757,8 @@ BEGIN
         VALUES ('ST001', 'UPS', 8007425877, '1 UPS Way', 'Boston', 'MA', '02101', 1);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate store UPS not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate contact number for store UPS not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate store ST001-UPS or phone number in use, not inserted.');
+        
     END;
 
     -- Inserting FedEx in New York
@@ -748,13 +767,8 @@ BEGIN
         VALUES ('ST002', 'FedEx', 8004633339, '2 FedEx Plaza', 'New York', 'NY', '10001', 1);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate store FedEx not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate contact number for store FedEx not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate store ST002-FedEx or phone number in use, not inserted.');
+       
     END;
 
     -- Inserting Five Guys in Chicago
@@ -763,36 +777,12 @@ BEGIN
         VALUES ('ST003', 'Five Guys', 8005551234, '3 Burger Blvd', 'Chicago', 'IL', '60606', 1);
     EXCEPTION 
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate store Five Guys not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate contact number for store Five Guys not inserted.');
-            ELSE
-                RAISE;
-            END IF;
+            DBMS_OUTPUT.PUT_LINE('Duplicate store ST003-Five Guys or phone number in use, not inserted.');
+        
     END;
 END;
 /
 
-BEGIN
-    -- Inserting UPS in Boston
-    BEGIN
-        INSERT INTO store (id, name, contact_no, address_line, city, state, zip_code, accepting_returns)
-        VALUES ('ST005', 'UPS1', 8007425877, '1 UPS Way', 'Boston', 'MA', '02101', 1);
-    EXCEPTION 
-        WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Duplicate store UPS not inserted.');
-        WHEN OTHERS THEN
-            IF SQLCODE = -1 THEN
-                DBMS_OUTPUT.PUT_LINE('Duplicate contact number for store UPS not inserted.');
-            ELSE
-                RAISE;
-            END IF;
-    END;
-
-    
-END;
-/
 
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -824,10 +814,11 @@ BEGIN
     
     BEGIN
         INSERT INTO return (id, reason, return_date, refund_status, quantity_returned, processing_fee, request_accepted, seller_refund, store_id, order_product_id)
-        VALUES ('RET004', 'Late delivery', TO_DATE('2023-03-22', 'YYYY-MM-DD'), 'SUCCESSFUL', 1, 10.00, 1, 1, 'ST001', 'OP0006');
+        VALUES ('RET004', 'Late delivery.', TO_DATE('2023-03-22', 'YYYY-MM-DD'), 'SUCCESSFUL', 1, 10.00, 1, 1, 'ST001', 'OP0006');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate return RET004 not inserted.');
     END;
+    
     
    
 END;
@@ -850,7 +841,7 @@ BEGIN
     -- Feedback 2
     BEGIN
         INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
-        VALUES ('FB002', 'C002', 'ST002', 3.0, 'Product was okay, but shipping was slow.');
+        VALUES ('FB002', 'C002', 'ST002', 3.0, 'Staffs not helpful.');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB002 not inserted.');
     END;
@@ -866,7 +857,7 @@ BEGIN
     -- Feedback 4
     BEGIN
         INSERT INTO feedback (id, customer_id, store_id, customer_rating, Review)
-        VALUES ('FB004', 'C001', 'ST003', 4.0, 'Great prices and friendly staff.');
+        VALUES ('FB004', 'C001', 'ST003', 4.0, 'Very-helpful and friendly staff.');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
         DBMS_OUTPUT.PUT_LINE('Duplicate feedback FB004 not inserted.');
     END;
@@ -883,148 +874,3 @@ END;
 --------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
-
-
-SELECT * FROM store;
-
-SELECT * FROM order_product;
-
-SELECT * FROM CUSTOMER;
-
-SELECT * FROM CATEGORY;
-
-SELECT * FROM CUSTOMER_ORDER;
-
-SELECT * FROM DISCOUNT;
-
-SELECT * FROM FEEDBACK;
-
-SELECT * FROM PRODUCT;
-
-SELECT * FROM RETURN;
-
-SELECT * FROM SELLER;
-
-
-
-----------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
------------------------------------------------------------DROP TABLES----------------------------------------------------------------------
-
-BEGIN
-    -- STORE Table
-    EXECUTE IMMEDIATE 'DROP TABLE store CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- SELLER Table
-    EXECUTE IMMEDIATE 'DROP TABLE seller CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- RETURN Table
-    EXECUTE IMMEDIATE 'DROP TABLE return CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- PRODUCT Table
-    EXECUTE IMMEDIATE 'DROP TABLE product CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- ORDER_PRODUCT Table
-    EXECUTE IMMEDIATE 'DROP TABLE order_product CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- "Order" Table
-    EXECUTE IMMEDIATE 'DROP TABLE CUSTOMER_ORDER CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- FEEDBACK Table
-    EXECUTE IMMEDIATE 'DROP TABLE feedback CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- DISCOUNT Table
-    EXECUTE IMMEDIATE 'DROP TABLE discount CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- CUSTOMER Table
-    EXECUTE IMMEDIATE 'DROP TABLE customer CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    -- CATEGORY Table
-    EXECUTE IMMEDIATE 'DROP TABLE category CASCADE CONSTRAINTS';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE != -942 THEN
-            RAISE;
-        END IF;
-END;
-/

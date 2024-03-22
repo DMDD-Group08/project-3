@@ -66,6 +66,30 @@ LEFT JOIN
     ) returned ON c.id = returned.customer_id;
 
 
+-- Delivery Date of the order : 
+
+CREATE OR REPLACE VIEW Order_Delivery_Date AS
+SELECT 
+    o.id AS Order_ID,
+    o.customer_id AS Customer_ID,  -- Include the customer ID
+    op.product_id AS Product_ID,
+    p.name AS Product_Name,
+    CASE 
+        WHEN c.name = 'Food/Beverages' THEN o.order_date + INTERVAL '2' DAY
+        WHEN c.name = 'Electronics' THEN o.order_date + INTERVAL '5' DAY
+        WHEN c.name = 'Clothing/Apparel' THEN o.order_date + INTERVAL '7' DAY
+        ELSE NULL
+    END AS Delivery_Date
+FROM 
+    CUSTOMER_ORDER o
+JOIN 
+    order_product op ON o.id = op.customer_order_id
+JOIN 
+    product p ON op.product_id = p.id
+JOIN 
+    category c ON p.category_id = c.id
+JOIN 
+    customer cu ON o.customer_id = cu.id; 
 
 -- No of returnable days
 -- It shows the customer how many days are remaining to return the product
@@ -91,30 +115,6 @@ JOIN
     
 
 
--- Delivery Date of the order : 
-
-CREATE OR REPLACE VIEW Order_Delivery_Date AS
-SELECT 
-    o.id AS Order_ID,
-    o.customer_id AS Customer_ID,  -- Include the customer ID
-    op.product_id AS Product_ID,
-    p.name AS Product_Name,
-    CASE 
-        WHEN c.name = 'Food/Beverages' THEN o.order_date + INTERVAL '2' DAY
-        WHEN c.name = 'Electronics' THEN o.order_date + INTERVAL '5' DAY
-        WHEN c.name = 'Clothing/Apparel' THEN o.order_date + INTERVAL '7' DAY
-        ELSE NULL
-    END AS Delivery_Date
-FROM 
-    CUSTOMER_ORDER o
-JOIN 
-    order_product op ON o.id = op.customer_order_id
-JOIN 
-    product p ON op.product_id = p.id
-JOIN 
-    category c ON p.category_id = c.id
-JOIN 
-    customer cu ON o.customer_id = cu.id; 
 
 
 -- Category list

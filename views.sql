@@ -46,7 +46,7 @@ LEFT JOIN
         FROM 
             "CUSTOMER_ORDER" o
         JOIN 
-            "ORDER_PRODUCT" op ON o.id = op.order_id
+            "ORDER_PRODUCT" op ON o.id = op.customer_order_id
         GROUP BY 
             o.customer_id
     ) total ON c.id = total.customer_id
@@ -60,7 +60,7 @@ LEFT JOIN
         JOIN 
             "ORDER_PRODUCT" op ON r.order_product_id = op.id
         JOIN 
-            "CUSTOMER_ORDER" o ON op.order_id = o.id
+            "CUSTOMER_ORDER" o ON op.customer_order_id = o.id
         GROUP BY 
             o.customer_id
     ) returned ON c.id = returned.customer_id;
@@ -73,7 +73,7 @@ LEFT JOIN
 
 CREATE OR REPLACE VIEW NUMBER_OF_RETURNABLE_DAYS AS
 SELECT 
-    op.order_id AS ORDER_ID,
+    op.customer_order_id AS ORDER_ID,
     p.name AS PRODUCT_NAME,
     TO_DATE(o.delivery_date + c.return_by_days) AS RETURN_BY_DATE,
     CASE 
@@ -83,7 +83,7 @@ SELECT
 FROM 
     Order_Delivery_Date o
 JOIN 
-    "ORDER_PRODUCT" op ON o.Order_ID = op.order_id
+    "ORDER_PRODUCT" op ON o.Order_ID = op.customer_order_id
 JOIN 
     "PRODUCT" p ON op.product_id = p.id
 JOIN 
@@ -108,7 +108,7 @@ SELECT
 FROM 
     CUSTOMER_ORDER o
 JOIN 
-    order_product op ON o.id = op.order_id
+    order_product op ON o.id = op.customer_order_id
 JOIN 
     product p ON op.product_id = p.id
 JOIN 

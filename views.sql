@@ -1,23 +1,4 @@
 
--- Total Order Price 
-
-CREATE OR REPLACE VIEW Total_Sum_Of_The_Order AS
-SELECT 
-    o.customer_id AS Customer_ID,
-    c.name AS Customer_Name,
-    o.status AS Status,
-    o.order_date AS Order_Date,
-    (
-        SELECT SUM(otp.total_price * op.quantity)
-        FROM "ORDER_PRODUCT" op 
-        JOIN order_total_price_ otp ON op.order_id = otp.customer_order_id
-        WHERE op.order_id = o.id
-    ) AS Total_Sum
-FROM 
-    "CUSTOMER_ORDER" o
-JOIN 
-    customer c ON o.customer_id = c.id;
-
 -- Frequency of returned products 
 -- This view displays how many times the product has been returned by all the customers
 
@@ -36,7 +17,6 @@ JOIN
 GROUP BY 
     op.product_id;
     
-SELECT * FROM RETURNED_PRODUCTS_DETAILS;
 
 
 -- Customer Reliability Index 
@@ -85,7 +65,6 @@ LEFT JOIN
             o.customer_id
     ) returned ON c.id = returned.customer_id;
 
-SELECT * FROM Customer_Reliability_Index;
 
 
 -- No of returnable days
@@ -110,7 +89,6 @@ JOIN
 JOIN 
     "CATEGORY" c ON p.category_id = c.id;
     
-SELECT * FROM NUMBER_OF_RETURNABLE_DAYS;
 
 
 -- Delivery Date of the order : 
@@ -138,4 +116,3 @@ JOIN
 JOIN 
     customer cu ON o.customer_id = cu.id; 
 
-SELECT * FROM Order_Delivery_Date;

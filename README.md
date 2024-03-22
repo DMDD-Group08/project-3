@@ -46,6 +46,20 @@ Returns and refunds management poses significant challenges in the current suppl
 - Only existing sellers can fetch categories and add products.
 - Only existing store managers can update the status of the stores.
 
+## SCRIPT RUNNING RULES
+
+The Below shows the order in which the scripts must executed:
+
+- The required users and grants must be given, the following scripts must be executed in the order mention:
+
+- admin_grants.sql: creates the admin to perform the ddl and dml operation.
+
+- DDL_DML.sql: The DDL script should be executed first so the required entities are created before executing the DML and other scripts. The DML Scripts are now executed so that the required values in inserted in each tuple of the corresponding entity.
+
+- customer_script.sql, seller_script.sql store_script.sql: user specific scripts should be executed.
+
+- views.sql : The required views are now created by executing the views scripts. The views must be executed in the order in which they were created in the script file, the name of the script file is.
+
 ## Conclusion
 
 The proposed solution aims to address the challenges associated with returns and refunds in supply chain management. By implementing a comprehensive online transaction management system and adhering to predefined business rules, we strive to optimize processes, enhance customer satisfaction, and reduce operational costs.
